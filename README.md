@@ -2,11 +2,12 @@
 
 ## Description
 This is a Django crud project with the following features:
--> Create
--> Read
--> Update/Edit
--> Delete (Hard Delete and Soft Delete)
--> Recycle Bin
+<br>
+1. Create
+2. Read
+3. Update/Edit
+4. Delete (Hard Delete and Soft Delete)
+5. Recycle Bin
 
 ## Installation
 1. Clone the repository:
