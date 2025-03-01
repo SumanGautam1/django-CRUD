@@ -1,173 +1,128 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends "base.html" %}
+{% block content %}
+<div class="row">
+    <div class="col-lg-4">
+        <div class="alert alert-success fs-3 text-center" role="alert">
+            Input Form
+        </div>
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+        <!-- Input Form -->
+        <form method="POST" action="{% url 'details' %}">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="name" class="form-label">Name:</label>
+                <input type="text" class="form-control" id="name" name="name">
+            </div>
 
-    <!-- Boostrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+            <div class="mb-3">
+                <label for="age" class="form-label">Age:</label>
+                <input type="number" class="form-control" id="age" name="age">
+            </div>
 
+            <div class="mb-3">
+                <label for="email" class="form-label">Email:</label>
+                <input type="email" class="form-control" id="email" name="email">
+            </div>
 
-    <!-- Font Awesome CSS -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
-        integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
-</head>
+            <div class="mb-3">
+                <label for="remark" class="form-label">Remark:</label>
+                <textarea name="remark" id="remark" class="form-control" name="remark"></textarea>
+            </div>
 
-<body>
-    <!-- Heading of Page -->
-    <div class="alert alert-warning fs-1 text-center" role="alert">
-        <b>CRUD Project</b>
+            <button type="submit" class="btn btn-success">Submit</button>
+            <button type="reset" class="btn btn-danger">Reset</button>
+        </form>
     </div>
+    <div class="col-lg-8">
+        <div class="alert alert-info fs-3 text-center" role="alert">
+            Details
+        </div>
 
-    <!-- Container for margin -->
-    <div class="container">
-        <div class="row">
-            <div class="col-lg-4">
-                <div class="alert alert-success fs-3 text-center" role="alert">
-                    Input Form
-                </div>
+        <table class="table table-striped">
+            <thead>
+                {% if data %}
+                <tr>
+                    <th scope="col">SN</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Age</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Remark</th>
+                    <th scope="col"></th>
+                </tr>
+                {% else %}
+                <h1>No Data To Show</h1>
 
-                <!-- Input Form -->
-                <form method="POST" action="{% url 'details' %}">
+                {% endif %}
+            </thead>
+            <tbody>
+
+                {% for i in data %}
+                <tr>
+                    <th scope="row">{{forloop.counter}}</th>
+                    <td>{{i.name}}</td>
+                    <td>{{i.age}}</td>
+                    <td>{{i.email}}</td>
+                    <td>{{i.remark}}</td>
+                    <td class="d-flex">
+                        <div class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editModal{{i.id}}">
+                            Edit</div>
+                        <form action="{% url 'delete' i.id %}" method="POST">
+                            {% csrf_token %}
+                            <input type="submit" class="btn btn-danger mx-1" value="Delete">
+                        </form>
+
+                    </td>
+                </tr>
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+        <a href="{% url 'bin' %}">
+            <div class="btn btn-success text-white fw-bold fs-3 w-25" data-bs-toggle="modal" data-bs-target="#binModal">
+                <i class="fa-solid fa-recycle text-white"> </i>
+            </div>
+        </a>
+    </div>
+</div>
+
+<!-- Modal -->
+{% for i in data %}
+<div class="modal fade" id="editModal{{i.id}}" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="alert alert-success alert-dismissible" role="alert">
+                <strong class="text-center fs-3">Edit Details</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="{% url 'edit' i.id %}">
                     {% csrf_token %}
                     <div class="mb-3">
                         <label for="name" class="form-label">Name:</label>
-                        <input type="text" class="form-control" id="name" name="name">
+                        <input type="text" class="form-control" name="name" id="name" value="{{i.name}}">
                     </div>
 
                     <div class="mb-3">
                         <label for="age" class="form-label">Age:</label>
-                        <input type="number" class="form-control" id="age" name="age">
+                        <input type="number" class="form-control" name="age" id="age" value="{{i.age}}">
                     </div>
 
                     <div class="mb-3">
                         <label for="email" class="form-label">Email:</label>
-                        <input type="email" class="form-control" id="email" name="email">
+                        <input type="email" class="form-control" name="email" id="email" value="{{i.email}}">
                     </div>
 
                     <div class="mb-3">
                         <label for="remark" class="form-label">Remark:</label>
-                        <textarea name="remark" id="remark" class="form-control" name="remark"></textarea>
+                        <textarea name="remark" id="remark" class="form-control" name="remark">{{i.remark}}</textarea>
                     </div>
 
                     <button type="submit" class="btn btn-success">Submit</button>
-                    <button type="reset" class="btn btn-danger">Reset</button>
                 </form>
             </div>
-            <div class="col-lg-8">
-                <div class="alert alert-info fs-3 text-center" role="alert">
-                    Details
-                </div>
-
-                <table class="table table-striped">
-                    <thead>
-                        {% if data %}
-                        <tr>
-                            <th scope="col">SN</th>
-                            <th scope="col">Name</th>
-                            <th scope="col">Age</th>
-                            <th scope="col">Email</th>
-                            <th scope="col">Remark</th>
-                            <th scope="col"></th>
-                        </tr>
-                        {% else %}
-                        <h1>No Data To Show</h1>
-
-                        {% endif %}
-                    </thead>
-                    <tbody>
-
-                        {% for i in data %}
-                        <tr>
-                            <th scope="row">{{forloop.counter}}</th>
-                            <td>{{i.name}}</td>
-                            <td>{{i.age}}</td>
-                            <td>{{i.email}}</td>
-                            <td>{{i.remark}}</td>
-                            <td class="d-flex">
-                                <div class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editModal{{i.id}}">
-                                    Edit</div>
-                                <form action="{% url 'delete' i.id %}" method="POST">
-                                    {% csrf_token %}
-                                    <input type="submit" class="btn btn-danger mx-1" value="Delete">
-                                </form>
-
-                            </td>
-                        </tr>
-                        {% endfor %}
-
-
-
-
-                    </tbody>
-
-                </table>
-                <a href="{% url 'bin' %}">
-                    <div class="btn btn-success text-white fw-bold fs-3 w-25" data-bs-toggle="modal"
-                        data-bs-target="#binModal">
-                        <i class="fa-solid fa-recycle text-white"> </i>
-                    </div>
-                </a>
-            </div>
-        </div>
-
-    </div>
-    <!-- Container ends -->
-
-    <!-- Modal -->
-    {% for i in data %}
-    <div class="modal fade" id="editModal{{i.id}}" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="alert alert-success alert-dismissible" role="alert">
-                    <strong class="text-center fs-3">Edit Details</strong>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form method="POST" action="{% url 'edit' i.id %}">
-                        {% csrf_token %}
-                        <div class="mb-3">
-                            <label for="name" class="form-label">Name:</label>
-                            <input type="text" class="form-control" id="name" name="name" value="{{i.name}}">
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="age" class="form-label">Age:</label>
-                            <input type="number" class="form-control" id="age" name="age" value="{{i.age}}">
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="email" class="form-label">Email:</label>
-                            <input type="email" class="form-control" id="email" name="email" value="{{i.email}}">
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="remark" class="form-label">Remark:</label>
-                            <textarea name="remark" id="remark" class="form-control"
-                                name="remark">{{i.remark}}</textarea>
-                        </div>
-
-                        <button type="submit" class="btn btn-success">Submit</button>
-                    </form>
-                </div>
-            </div>
         </div>
     </div>
-    {% endfor %}
-
-
-
-
-
-
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
-        crossorigin="anonymous"></script>
-</body>
-
-</html>
+</div>
+{% endfor %}
+{% endblock content %}
