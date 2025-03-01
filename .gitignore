@@ -1,0 +1,12 @@
+# Lite database
+db.sqlite3
+
+# Unnecessary files
+__pycache__/
+*.pyc
+
+# Environment Variables
+.env
+
+# Virtual environment
+env/
