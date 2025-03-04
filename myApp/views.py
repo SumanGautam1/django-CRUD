@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from .models import Details
+from django.contrib import messages
 
 def details(request):
     """
@@ -25,6 +26,7 @@ def details(request):
         remark = data.get('remark')
         d = Details(name=name, age=age, email=email, remark=remark)
         d.save()
+        messages.success(request, "Data added successfully!")
         return redirect('details')
     
     data = Details.objects.filter(is_deleted=False)

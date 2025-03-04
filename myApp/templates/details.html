@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
+
+
 <div class="row">
     <div class="col-lg-4">
         <div class="alert alert-success fs-3 text-center" role="alert">
@@ -125,4 +127,20 @@
     </div>
 </div>
 {% endfor %}
+
+
+
+
 {% endblock content %}
+
+{% block scripts %}
+{% if messages %}
+{% for message in messages %}
+<script>
+alertify.set('notifier','position', 'bottom-right');
+alertify.success('{{message}}');
+</script>
+
+{% endfor %}
+{% endif %}
+{% endblock scripts %}
